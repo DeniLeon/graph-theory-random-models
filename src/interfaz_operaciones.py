@@ -10,9 +10,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 
 def crear_grafo_vacio(n):
-    """
-    Crea un grafo vacío con n nodos etiquetados de 0 a n-1.
-    """
+    #creamos el grafo vacío con n nodos etiquetados de 0 a n-1
     G = nx.Graph()
     for i in range(n):
         G.add_node(i)
@@ -20,9 +18,7 @@ def crear_grafo_vacio(n):
 
 
 def resumen_texto(G, nombre="Grafo"):
-    """
-    Devuelve un resumen en texto del grafo.
-    """
+    #Devuelve un resumen en texto del grafo
     n = G.number_of_nodes()
     m = G.number_of_edges()
 
@@ -46,9 +42,7 @@ def resumen_texto(G, nombre="Grafo"):
 
 
 def renombrar_nodos_con_prefijo(G, prefijo):
-    """
-    Renombra los nodos de un grafo con un prefijo para evitar colisiones.
-    """
+    #Renombra los nodos de un grafo con un prefijo para evitar colisiones
     nuevo_grafo = nx.Graph()
     mapa = {}
 
@@ -63,14 +57,10 @@ def renombrar_nodos_con_prefijo(G, prefijo):
     return nuevo_grafo
 
 
-# =========================================================
-# 2. MODELOS DE GENERACIÓN
-# =========================================================
+#MODELOS DE GENRACIÓN DE GRAFOS ALEATORIOS
 
-def modelo_gnm_scratch(n, m):
-    """
-    Modelo G(n,m) de Erdős-Rényi desde cero.
-    """
+def modelo_gnm(n, m):
+    #Modelo G(n,m) de Erdős-Rényi
     G = crear_grafo_vacio(n)
 
     posibles_aristas = []
@@ -89,10 +79,8 @@ def modelo_gnm_scratch(n, m):
     return G, None
 
 
-def modelo_gnp_scratch(n, p):
-    """
-    Modelo G(n,p) de Gilbert desde cero.
-    """
+def modelo_gnp(n, p):
+    #Modelo G(n,p) de Gilbert
     G = crear_grafo_vacio(n)
 
     for i in range(n):
@@ -103,12 +91,10 @@ def modelo_gnp_scratch(n, p):
     return G, None
 
 
-def modelo_geografico_scratch(n, radio):
-    """
-    Modelo geográfico simple desde cero.
-    Coloca nodos aleatoriamente en el plano unitario y conecta
-    si la distancia euclidiana es menor o igual al radio.
-    """
+def modelo_geografico(n, radio):
+    #Modelo geográfico simple
+    #coloca nodos aleatoriamente en el plano unitario y conecta
+    #si la distancia euclidiana es menor o igual al radio
     G = crear_grafo_vacio(n)
     posiciones = {}
 
@@ -130,14 +116,13 @@ def modelo_geografico_scratch(n, radio):
     return G, posiciones
 
 
-def modelo_dorogovtsev_mendes_scratch(n):
-    """
-    Modelo Dorogovtsev-Mendes desde cero.
-    Inicia con un triángulo y en cada paso:
-    - elige una arista al azar
-    - agrega un nuevo nodo
-    - lo conecta a los dos extremos de esa arista
-    """
+def modelo_dorogovtsev_mendes(n):
+    #Modelo Dorogovtsev-Mendes
+    #Inicia con un triángulo y en cada paso:
+    #elige una arista al azar
+    #agrega un nuevo nodo
+    #lo conecta a los dos extremos de esa arista
+
     if n < 3:
         raise ValueError("El modelo Dorogovtsev-Mendes requiere n >= 3.")
 
@@ -166,16 +151,12 @@ def modelo_dorogovtsev_mendes_scratch(n):
     return G, None
 
 
-# =========================================================
-# 3. OPERACIONES ENTRE GRAFOS DESDE SCRATCH
-# =========================================================
+#OPERACIONES ENTRE GRAFOS DESDE SCRATCH
 
-def union_grafos_scratch(G, H):
-    """
-    Unión:
-    V(U) = V(G) ∪ V(H)
-    E(U) = E(G) ∪ E(H)
-    """
+def union_grafos(G, H):
+    #Unión:
+    #V(U) = V(G) ∪ V(H)
+    #E(U) = E(G) ∪ E(H)
     G_r = renombrar_nodos_con_prefijo(G, "G")
     H_r = renombrar_nodos_con_prefijo(H, "H")
 
@@ -196,11 +177,10 @@ def union_grafos_scratch(G, H):
     return U
 
 
-def conjuncion_grafos_scratch(G, H):
-    """
-    Conjunción:
-    G + H = G ∪ H más todas las aristas entre nodos de G y nodos de H.
-    """
+def conjuncion_grafos(G, H):
+    #Conjunción:
+    #G + H = G ∪ H más todas las aristas entre nodos de G y nodos de H.
+
     G_r = renombrar_nodos_con_prefijo(G, "G")
     H_r = renombrar_nodos_con_prefijo(H, "H")
 
@@ -225,16 +205,14 @@ def conjuncion_grafos_scratch(G, H):
     return J
 
 
-def producto_cartesiano_scratch(G, H):
-    """
-    Producto cartesiano:
-    V(P) = V(G) × V(H)
+def producto_cartesiano(G, H):
+    #Producto cartesiano:
+    #V(P) = V(G) × V(H)
+    #Hay arista entre (u1,v1) y (u2,v2) si:
+    #u1 = u2 y (v1,v2) es arista de H
+    #o
+    #v1 = v2 y (u1,u2) es arista de G
 
-    Hay arista entre (u1,v1) y (u2,v2) si:
-    - u1 = u2 y (v1,v2) es arista de H
-    o
-    - v1 = v2 y (u1,u2) es arista de G
-    """
     P = nx.Graph()
 
     for u in G.nodes():
@@ -252,9 +230,6 @@ def producto_cartesiano_scratch(G, H):
     return P
 
 
-# =========================================================
-# 4. APLICACIÓN
-# =========================================================
 
 class AppGrafos:
     def __init__(self, root):
@@ -274,9 +249,6 @@ class AppGrafos:
         # Interfaz
         self.crear_interfaz()
 
-    # -----------------------------------------------------
-    # INTERFAZ
-    # -----------------------------------------------------
 
     def crear_interfaz(self):
         marco_superior = tk.Frame(self.root, padx=4, pady=4)
@@ -467,9 +439,7 @@ class AppGrafos:
         self.texto_res = tk.Text(frame, height=5, width=38, font=("Arial", 9))
         self.texto_res.pack(side=tk.LEFT, padx=4)
 
-    # -----------------------------------------------------
-    # LÓGICA
-    # -----------------------------------------------------
+#LOGICA
 
     def leer_parametros(self):
         try:
@@ -525,19 +495,19 @@ class AppGrafos:
 
     def generar_grafo_desde_modelo(self, tipo_modelo, n, m, p, radio):
         if tipo_modelo == "gnm":
-            G, pos = modelo_gnm_scratch(n, m)
+            G, pos = modelo_gnm(n, m)
             nombre = f"G(n,m) con n={n}, m={m}"
 
         elif tipo_modelo == "gnp":
-            G, pos = modelo_gnp_scratch(n, p)
+            G, pos = modelo_gnp(n, p)
             nombre = f"G(n,p) con n={n}, p={p:.2f}"
 
         elif tipo_modelo == "geo":
-            G, pos = modelo_geografico_scratch(n, radio)
+            G, pos = modelo_geografico(n, radio)
             nombre = f"Geográfico con n={n}, radio={radio:.2f}"
 
         elif tipo_modelo == "dm":
-            G, pos = modelo_dorogovtsev_mendes_scratch(n)
+            G, pos = modelo_dorogovtsev_mendes(n)
             nombre = f"Dorogovtsev-Mendes con n={n}"
 
         else:
@@ -593,7 +563,7 @@ class AppGrafos:
         if not self.validar_grafos_generados():
             return
 
-        U = union_grafos_scratch(self.G, self.H)
+        U = union_grafos(self.G, self.H)
         pos_U = self.calcular_layout_resultado(U)
 
         self.axes[2].clear()
@@ -606,7 +576,7 @@ class AppGrafos:
         if not self.validar_grafos_generados():
             return
 
-        J = conjuncion_grafos_scratch(self.G, self.H)
+        J = conjuncion_grafos(self.G, self.H)
         pos_J = self.calcular_layout_resultado(J)
 
         self.axes[2].clear()
@@ -619,7 +589,7 @@ class AppGrafos:
         if not self.validar_grafos_generados():
             return
 
-        P = producto_cartesiano_scratch(self.G, self.H)
+        P = producto_cartesiano(self.G, self.H)
         pos_P = self.calcular_layout_resultado(P, tipo="producto")
 
         self.axes[2].clear()
@@ -643,17 +613,15 @@ class AppGrafos:
         self.actualizar_texto(self.texto_g2, "")
         self.actualizar_texto(self.texto_res, "")
 
-    # -----------------------------------------------------
-    # VISUALIZACIÓN
-    # -----------------------------------------------------
+    #VISUALIZACION
 
     def limpiar_axes(self):
         for ax in self.axes:
             ax.clear()
             ax.axis("off")
 
-        self.axes[0].set_title("Grafo 1", fontsize=11)
-        self.axes[1].set_title("Grafo 2", fontsize=11)
+        self.axes[0].set_title("Grafo 1 : G", fontsize=11)
+        self.axes[1].set_title("Grafo 2 : H", fontsize=11)
         self.axes[2].set_title("Resultado", fontsize=11)
 
     def calcular_layout_resultado(self, G, tipo="general"):
@@ -732,9 +700,7 @@ class AppGrafos:
         return True
 
 
-# =========================================================
-# 5. MAIN
-# =========================================================
+#main
 
 if __name__ == "__main__":
     root = tk.Tk()
