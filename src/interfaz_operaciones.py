@@ -10,7 +10,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 
 def crear_grafo_vacio(n):
-    #creamos el grafo vacío con n nodos etiquetados de 0 a n-1
+    #creamos el grafo con n nodos etiquetados de 0 a n-1
     G = nx.Graph()
     for i in range(n):
         G.add_node(i)
@@ -44,6 +44,7 @@ def resumen_texto(G, nombre="Grafo"):
 def renombrar_nodos_con_prefijo(G, prefijo):
     #Renombra los nodos de un grafo con un prefijo para evitar colisiones
     nuevo_grafo = nx.Graph()
+    #se crea un diccionario para mapear los nodos
     mapa = {}
 
     for nodo in G.nodes():
@@ -63,6 +64,7 @@ def modelo_gnm(n, m):
     #Modelo G(n,m) de Erdős-Rényi
     G = crear_grafo_vacio(n)
 
+    #inicializamos la lista de aristas posibles
     posibles_aristas = []
     for i in range(n):
         for j in range(i + 1, n):
@@ -70,7 +72,7 @@ def modelo_gnm(n, m):
 
     max_aristas = len(posibles_aristas)
     m = min(m, max_aristas)
-
+    #solo se agregan m aristas aleatorias
     aristas_elegidas = random.sample(posibles_aristas, m)
 
     for u, v in aristas_elegidas:
@@ -81,6 +83,7 @@ def modelo_gnm(n, m):
 
 def modelo_gnp(n, p):
     #Modelo G(n,p) de Gilbert
+    #revisa cada posible par de nodos y agrega una arista con probabilidad p
     G = crear_grafo_vacio(n)
 
     for i in range(n):
@@ -125,7 +128,7 @@ def modelo_dorogovtsev_mendes(n):
 
     if n < 3:
         raise ValueError("El modelo Dorogovtsev-Mendes requiere n >= 3.")
-
+    #se saca de la bibliotea networkx para crear el grafo
     G = nx.Graph()
 
     # Triángulo inicial
@@ -135,23 +138,25 @@ def modelo_dorogovtsev_mendes(n):
     G.add_edge(0, 1)
     G.add_edge(1, 2)
     G.add_edge(0, 2)
-
+    #contador de nodos
     nuevo_nodo = 3
 
     while nuevo_nodo < n:
         aristas_actuales = list(G.edges())
+        #desempaqueta la arista elegida
         u, v = random.choice(aristas_actuales)
 
         G.add_node(nuevo_nodo)
+        #se agregan las aristas al nuevo nodo
         G.add_edge(nuevo_nodo, u)
         G.add_edge(nuevo_nodo, v)
-
+        #incrementa el contador de nodos
         nuevo_nodo += 1
 
     return G, None
 
 
-#OPERACIONES ENTRE GRAFOS DESDE SCRATCH
+#OPERACIONES ENTRE GRAFOS
 
 def union_grafos(G, H):
     #Unión:
@@ -197,7 +202,7 @@ def conjuncion_grafos(G, H):
 
     for u, v in H_r.edges():
         J.add_edge(u, v)
-
+    #este for agrega todas las aristas entre nodos de G y nodos de H
     for u in G_r.nodes():
         for v in H_r.nodes():
             J.add_edge(u, v)
